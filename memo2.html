@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+
+    input{
+      display: inline-block;
+    }
+    
+      ul{
+        display:flex;
+        list-style:none;
+        /* justify-content: space-around; */
+      }
+    
+      li{
+      margin-left: 20px;
+      background-color: antiquewhite;
+      }
+      li:active{
+        background-color: brown;
+      }
+    
+    
+    </style>
+<body>
+    
+    <h1>Vueの練習</h1>
+    <div id="app">
+        <main>
+            <input type="text" id='key' v-model='title'>
+            <br>
+            <textarea  id="memo" cols="30" rows="10" v-model='naiyou'></textarea>
+            <ul>
+                <li v-on:click='savefunc'>{{save}}</li>
+                <li v-on:click='delfunc'>{{del}}</li>
+            </ul>  
+            
+        </main>
+          <table id ='list'>
+          <!-- ここにリストが表示される -->
+          <tr>
+             <th>{{displayKey}}
+                 <td>{{displayValue}}</td>
+             </th>
+          </tr>   
+          </table>
+    </div>
+
+         
+
+
+
+ 
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script>
+new Vue({
+    el:'#app',
+    data:{
+        save:'保存',
+        del:'削除',
+        title:'',
+        naiyou:'',
+   
+    
+
+    },
+    methods: {
+        savefunc(){
+       // keyとmemoで記入内容取得
+        // const key = document.querySelector('#key').value;
+        // const value = document.querySelector('#memo').value;
+        const table = document.createElement('tr');
+        table.innerHTML= '<th>'+this.title+'<td>'+this.naiyou+'</td></th>'
+        localStorage.setItem(this.title, this.naiyou);
+    
+        list.appendChild(table);//リストは変数を定義せずとも使用できる（Vueだからなのか？）
+        },
+        //削除機能
+        delfunc(){
+            localStorage.clear();  
+            list.innerHTML ='';//listタグの中身を空にすることでlist内のタグの記述を消している
+        },
+      },
+    computed:{
+         displayKey(){
+             if(localStorage.length == 0) return ''
+            for(let i =0; i<localStorage.length; i++){
+                return localStorage.key(i)//この方法ではdisplayKeyの値がループの度に更新されて一覧でだせない
+
+             } 
+         },
+         displayValue(){
+             if(localStorage.length == 0) return ''
+             for(let i =0; i<localStorage.length; i++){ 
+              return localStorage.getItem(localStorage.key(i))//この方法ではdisplayKeyの値がループの度に更新されて一覧でだせない
+
+             }
+         },
+
+    }
+})
+
+
+//保存の記述
+for(let i =0; i<localStorage.length; i++){
+  const key = localStorage.key(i);
+  const value = localStorage.getItem(key);
+  const table = document.createElement('tr');
+  table.innerHTML= '<tr>'+key+'</th><td>'+value+'</td></tr>'
+  list.appendChild(table);
+}
+
+
+
+
+// //変数定義
+// let text_area,
+//     save,
+//     clear,
+//     list;
+    
+
+//  list = document.querySelector('#list');
+
+
+
+// //saveの記述
+// save = document.querySelector('#save');
+
+
+// save.onclick = function(){//keyとmemoで記入内容取得
+//  const key = document.querySelector('#key').value;
+//  const value = document.querySelector('#memo').value;
+//  const table = document.createElement('tr');
+//  table.innerHTML= '<tr>'+key+'</th><td>'+value+'</td></tr>'
+//  localStorage.setItem(key, value);
+ 
+//  list.appendChild(table);
+
+ 
+// };
+
+//  //clearの記述
+//  clear = document.querySelector('#clear');
+  
+//  clear.onclick = function(){
+//   localStorage.clear();  
+//   list.innerHTML ='';//listタグの中身を空にすることでlist内のタグの記述を消している
+// }
+
+
+
+    
+</script>
+</body>
+</html>
