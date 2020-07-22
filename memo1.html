@@ -1,119 +1,156 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
 <style>
-
-    input{
-      display: inline-block;
+    input {
+        display: inline-block;
     }
-    
-      ul{
-        display:flex;
-        list-style:none;
+
+    ul {
+        display: flex;
+        list-style: none;
         /* justify-content: space-around; */
-      }
-    
-      li{
-      margin-left: 20px;
-      background-color: antiquewhite;
-      }
-      li:active{
+    }
+
+    li {
+        margin-left: 20px;
+        background-color: antiquewhite;
+    }
+
+    li:active {
         background-color: brown;
-      }
-    
-    
-    </style>
+    }
+</style>
+
 <body>
-    
+
     <h1>Vueの練習</h1>
     <div id="app">
         <main>
-            <input type="text" id='key'>
+            <input v-model="inputData.title" type="text" id='key'>
             <br>
-            <textarea  id="memo" cols="30" rows="10"></textarea>
+            <textarea v-model="inputData.body" id="memo" cols="30" rows="10"></textarea>
             <ul>
-                <li v-on:click='savefunc'>{{save}}</li>
-                <li v-on:click='delfunc'>{{del}}</li>
-            </ul>  
-            
+                <li @click="save">保存</li>
+                <li @click="cancel">削除</li>
+            </ul>
+
         </main>
-          <table id ='list'>
-          <!-- ここにリストが表示される -->
-          <tr>
-             <th>{{displayKey}}
-                 <td>{{displayValue}}</td>
-             </th>
-          </tr>   
-          </table>
+        <table id='list'>
+            <!-- ここにリストが表示される -->
+            <tr v-for="memo in memos" :key="'memo-' + memo.id">
+                <th>{{ memo.title }}</th>
+                <td>{{ memo.body }}</td>
+                <td @click="deleteMemo(memo.id)" style="cursor: pointer;">削除</td>
+            </tr>
+        </table>
     </div>
 
-         
 
 
 
- 
-
-
-<script src="https://cdn.jsdelivr.net/npm/vue"></script>
-<script>
-new Vue({
-    el:'#app',
-    data:{
-        save:'保存',
-        del:'削除',
-        key:'',
-        value:'',
-
-    },
-    methods: {
-        savefunc(){
-       // keyとmemoで記入内容取得
-        const key = document.querySelector('#key').value;
-        const value = document.querySelector('#memo').value;
-        const table = document.createElement('tr');
-        table.innerHTML= '<th>'+key+'<td>'+value+'</td></th>'
-        localStorage.setItem(key, value);
-    
-        list.appendChild(table);//リストは変数を定義せずとも使用できる（Vueだからなのか？）
-        },
-        //削除機能
-        delfunc(){
-            localStorage.clear();  
-            list.innerHTML ='';//listタグの中身を空にすることでlist内のタグの記述を消している
-        },
-        
-
-        // //保存の記述
-//         for(let i =0; i<localStorage.length; i++){
-//         const key = localStorage.key(i);
-//         const value = localStorage.getItem(key);
-//         const table = document.createElement('tr');
-//         table.innerHTML= '<tr>'+key+'</th><td>'+value+'</td></tr>'
-//         list.appendChild(table);
-// }
-    },
-    computed:{
-         displayKey(){
-             if(localStorage.length == 0) return ''
-             return 'testtt'
-            //  return document.querySelector('#key').value
-         },
-         displayValue(){
-             if(localStorage.length == 0) return ''
-             return  'test';
-            //  return  document.querySelector('#memo').value;
-         },
-
-            
 
 
 
-    }
-})
+
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                localStorageKey: 'memoPadLocalStrageKey',
+                inputData: {
+                    title: '',
+                    body: ''
+                },
+                memos: []
+            },
+            created() {
+                this.initialize()
+            },
+            methods: {
+                //---------------------------------------------------------
+                // 保存処理
+                //---------------------------------------------------------
+                _getMemoKey() {
+                    return new Date().toLocaleString().replace(' ', '_')
+                },
+                _saveMemo() {
+                    this.memos.push({
+                        title: this.inputData.title,
+                        body: this.inputData.body,
+                        id: this._getMemoKey()
+                    })
+                },
+                _saveLocal() {
+                    localStorage.setItem(this.localStorageKey, JSON.stringify(this.memos))
+                },
+                save() {
+                    this._saveMemo()
+                    this._saveLocal()
+                    this._clearMemo()
+                },
+                //---------------------------------------------------------
+                // 取り消し処理
+                //---------------------------------------------------------
+                _clearMemo() {
+                    this.inputData.title = ''
+                    this.inputData.body = ''
+                },
+                cancel() {
+                    this._clearMemo()
+                },
+                //---------------------------------------------------------
+                // 初回読み込み処理
+                //---------------------------------------------------------
+                _setMemo(memo) {
+                    this.memos.push(memo)
+                },
+                _fetchLocalMemo() {
+                    return JSON.parse(localStorage.getItem(this.localStorageKey))
+                },
+                _hasLocalMemo() {
+                    return localStorage.getItem(this.localStorageKey) != null ? true : false
+                },
+                initialize() {
+                    if (this._hasLocalMemo()) {
+                        this._fetchLocalMemo().forEach(memo => this._setMemo(memo))
+                    }
+                },
+                //---------------------------------------------------------
+                // 削除処理
+                //---------------------------------------------------------
+                _getDeleteMemo(id) {
+                    return this.memos.find(memo => memo.id == id)
+                },
+                _getDeleteMemoIndex(memo) {
+                    return this.memos.findIndex(el => el == memo)
+                },
+                deleteMemo(id) {
+                    const memo = this._getDeleteMemo(id)
+                    const index = this._getDeleteMemoIndex(memo)
+                    this.memos.splice(index, 1)
+                    this._saveLocal()
+                },
+                savefunc() {
+                    // keyとmemoで記入内容取得
+                    //----------------------------------------------------------------------
+                    // これは絶対やらない。vue.jsでは基本的にDOMは参照しない
+                    // const key = document.querySelector('#key').value;
+                    // const value = document.querySelector('#memo').value;
+                    // const table = document.createElement('tr');
+                    // table.innerHTML= '<th>'+key+'<td>'+value+'</td></th>'
+                    //---------------------------------------------------------------------
+                },
+
+            },
+            computed: {}
+        })
 
 
 
@@ -122,7 +159,7 @@ new Vue({
 //     save,
 //     clear,
 //     list;
-    
+
 
 //  list = document.querySelector('#list');
 
@@ -138,15 +175,15 @@ new Vue({
 //  const table = document.createElement('tr');
 //  table.innerHTML= '<tr>'+key+'</th><td>'+value+'</td></tr>'
 //  localStorage.setItem(key, value);
- 
+
 //  list.appendChild(table);
 
- 
+
 // };
 
 //  //clearの記述
 //  clear = document.querySelector('#clear');
-  
+
 //  clear.onclick = function(){
 //   localStorage.clear();  
 //   list.innerHTML ='';//listタグの中身を空にすることでlist内のタグの記述を消している
@@ -162,7 +199,8 @@ new Vue({
 // }
 
 
-    
-</script>
+
+    </script>
 </body>
+
 </html>
