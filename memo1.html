@@ -46,7 +46,7 @@
             <tr v-for="memo in memos" :key="'memo-' + memo.id">
                 <th>{{ memo.title }}</th>
                 <td>{{ memo.body }}</td>
-                <td @click="_getMemoKey">×</td>
+                <td @click="deleteMemo(memo.id)" style="cursor: pointer;">削除</td>
             </tr>
         </table>
     </div>
@@ -68,13 +68,7 @@
                     title: '',
                     body: ''
                 },
-                memos: [
-                    {
-                        title: 'test',
-                        body: 'test',
-                        id: 0
-                    }
-                ]
+                memos: []
             },
             created() {
                 this.initialize()
@@ -114,7 +108,18 @@
                 initialize() {
                     this._fetchLocalMemo().forEach(memo => this._setMemo(memo))
                 },
-                deleteMemo() { },
+                _getDeleteMemo(id) {
+                    return this.memos.find(memo => memo.id == id)
+                },
+                _getDeleteMemoIndex(memo) {
+                    return this.memos.findIndex(el => el == memo)
+                },
+                deleteMemo(id) {
+                    const memo = this._getDeleteMemo(id)
+                    const index = this._getDeleteMemoIndex(memo)
+                    this.memos.splice(index, 1)
+                    this._saveLocal()
+                },
                 savefunc() {
                     // keyとmemoで記入内容取得
                     //----------------------------------------------------------------------
