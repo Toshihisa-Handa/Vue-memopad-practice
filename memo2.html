@@ -32,22 +32,18 @@
     <h1>Vueの練習</h1>
     <div id="app">
         <main>
-            <input type="text" id='key'>
+            <input type="text" v-bind:id='strageKey'>
             <br>
-            <textarea  id="memo" cols="30" rows="10"></textarea>
+            <textarea id="memo" cols="30" rows="10"></textarea>
             <ul>
                 <li v-on:click='savefunc'>{{save}}</li>
                 <li v-on:click='delfunc'>{{del}}</li>
             </ul>  
             
         </main>
-          <table id ='list'>
+          <table v-bind:id ='strageList'>
           <!-- ここにリストが表示される -->
-          <tr>
-             <th>{{displayKey}}
-                 <td>{{displayValue}}</td>
-             </th>
-          </tr>   
+          {{lists}}
           </table>
     </div>
 
@@ -65,52 +61,28 @@ new Vue({
     data:{
         save:'保存',
         del:'削除',
-        key:'',
-        value:'',
+        strageKey:'key',
+        // strageMemo:'memo',
+        lists:'',
 
     },
     methods: {
         savefunc(){
        // keyとmemoで記入内容取得
-        const key = document.querySelector('#key').value;
+        // const key = document.querySelector('#key').value;
         const value = document.querySelector('#memo').value;
-        const table = document.createElement('tr');
-        table.innerHTML= '<th>'+key+'<td>'+value+'</td></th>'
-        localStorage.setItem(key, value);
-    
+        // const table = document.createElement('tr');
+        this.list= '<tr><th>'+this.key+'<td>'+value+'</td></th></tr>'
+        localStorage.setItem(this.key, value);
+        
         list.appendChild(table);//リストは変数を定義せずとも使用できる（Vueだからなのか？）
         },
         //削除機能
-        delfunc(){
+         delfunc(){
             localStorage.clear();  
             list.innerHTML ='';//listタグの中身を空にすることでlist内のタグの記述を消している
-        },
-        
-
-        // //保存の記述
-//         for(let i =0; i<localStorage.length; i++){
-//         const key = localStorage.key(i);
-//         const value = localStorage.getItem(key);
-//         const table = document.createElement('tr');
-//         table.innerHTML= '<tr>'+key+'</th><td>'+value+'</td></tr>'
-//         list.appendChild(table);
-// }
-    },
-    computed:{
-         displayKey(){
-             if(localStorage.length == 0) return ''
-             return document.querySelector('#key').value
-         },
-         displayValue(){
-             if(localStorage.length == 0) return ''
-             const value = document.querySelector('#memo').value;
-         },
-
-            
-
-
-
     }
+    },
 })
 
 
@@ -151,13 +123,13 @@ new Vue({
 // }
 
 // //保存の記述
-for(let i =0; i<localStorage.length; i++){
-  const key = localStorage.key(i);
-  const value = localStorage.getItem(key);
-  const table = document.createElement('tr');
-  table.innerHTML= '<tr>'+key+'</th><td>'+value+'</td></tr>'
-  list.appendChild(table);
-}
+// for(let i =0; i<localStorage.length; i++){
+//   const key = localStorage.key(i);
+//   const value = localStorage.getItem(key);
+//   const table = document.createElement('tr');
+//   table.innerHTML= '<tr>'+key+'</th><td>'+value+'</td></tr>'
+//   list.appendChild(table);
+// }
 
 
     
