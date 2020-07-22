@@ -34,9 +34,9 @@
         <main>
             <input v-model="inputData.title" type="text" id='key'>
             <br>
-            <textarea v-modle="inputData.body" id="memo" cols="30" rows="10"></textarea>
+            <textarea v-model="inputData.body" id="memo" cols="30" rows="10"></textarea>
             <ul>
-                <li>保存</li>
+                <li @click="save">保存</li>
                 <li>削除</li>
             </ul>
 
@@ -46,7 +46,7 @@
             <tr v-for="memo in memos" :key="'memo-' + memo.id">
                 <th>{{ memo.title }}</th>
                 <td>{{ memo.body }}</td>
-                <td>×</td>
+                <td @click="_getMemoKey">×</td>
             </tr>
         </table>
     </div>
@@ -77,10 +77,31 @@
                 ]
             },
             methods: {
-                _getMemoKey() { },
-                cancelMemo() { },
-                saveMemo() { },
-                fetchMemos() { },
+                _getMemoKey() {
+                    return new Date().toLocaleString().replace(' ', '_')
+                },
+                _saveMemo() {
+                    this.memos.push({
+                        title: this.inputData.title,
+                        body: this.inputData.body,
+                        id: this._getMemoKey()
+                    })
+                },
+                _saveLocal() {
+                    localStorage.setItem(this.localStorageKey, JSON.stringify(this.memos))
+                },
+                _clearMemo() {
+                    this.inputData.title = ''
+                    this.inputData.body = ''
+                },
+                save() {
+                    this._saveMemo()
+                    this._saveLocal()
+                    this._clearMemo()
+                },
+                fetchMemos() {
+
+                },
                 deleteMemo() { },
                 savefunc() {
                     // keyとmemoで記入内容取得
