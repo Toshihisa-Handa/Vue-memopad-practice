@@ -74,6 +74,9 @@
                 this.initialize()
             },
             methods: {
+                //---------------------------------------------------------
+                // 保存処理
+                //---------------------------------------------------------
                 _getMemoKey() {
                     return new Date().toLocaleString().replace(' ', '_')
                 },
@@ -87,27 +90,41 @@
                 _saveLocal() {
                     localStorage.setItem(this.localStorageKey, JSON.stringify(this.memos))
                 },
-                _clearMemo() {
-                    this.inputData.title = ''
-                    this.inputData.body = ''
-                },
                 save() {
                     this._saveMemo()
                     this._saveLocal()
                     this._clearMemo()
                 },
+                //---------------------------------------------------------
+                // 取り消し処理
+                //---------------------------------------------------------
+                _clearMemo() {
+                    this.inputData.title = ''
+                    this.inputData.body = ''
+                },
                 cancel() {
                     this._clearMemo()
                 },
+                //---------------------------------------------------------
+                // 初回読み込み処理
+                //---------------------------------------------------------
                 _setMemo(memo) {
                     this.memos.push(memo)
                 },
                 _fetchLocalMemo() {
                     return JSON.parse(localStorage.getItem(this.localStorageKey))
                 },
-                initialize() {
-                    this._fetchLocalMemo().forEach(memo => this._setMemo(memo))
+                _hasLocalMemo() {
+                    return localStorage.getItem(this.localStorageKey) != null ? true : false
                 },
+                initialize() {
+                    if (this._hasLocalMemo()) {
+                        this._fetchLocalMemo().forEach(memo => this._setMemo(memo))
+                    }
+                },
+                //---------------------------------------------------------
+                // 削除処理
+                //---------------------------------------------------------
                 _getDeleteMemo(id) {
                     return this.memos.find(memo => memo.id == id)
                 },
