@@ -76,6 +76,9 @@
                     }
                 ]
             },
+            created() {
+                this.initialize()
+            },
             methods: {
                 _getMemoKey() {
                     return new Date().toLocaleString().replace(' ', '_')
@@ -102,8 +105,14 @@
                 cancel() {
                     this._clearMemo()
                 },
-                fetchMemos() {
-
+                _setMemo(memo) {
+                    this.memos.push(memo)
+                },
+                _fetchLocalMemo() {
+                    return JSON.parse(localStorage.getItem(this.localStorageKey))
+                },
+                initialize() {
+                    this._fetchLocalMemo().forEach(memo => this._setMemo(memo))
                 },
                 deleteMemo() { },
                 savefunc() {
