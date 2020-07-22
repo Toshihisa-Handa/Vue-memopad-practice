@@ -37,7 +37,7 @@
             <textarea v-model="inputData.body" id="memo" cols="30" rows="10"></textarea>
             <ul>
                 <li @click="save">保存</li>
-                <li>削除</li>
+                <li @click="cancel">削除</li>
             </ul>
 
         </main>
@@ -97,6 +97,9 @@
                 save() {
                     this._saveMemo()
                     this._saveLocal()
+                    this._clearMemo()
+                },
+                cancel() {
                     this._clearMemo()
                 },
                 fetchMemos() {
