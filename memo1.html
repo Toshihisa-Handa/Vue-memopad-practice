@@ -99,11 +99,13 @@ new Vue({
     computed:{
          displayKey(){
              if(localStorage.length == 0) return ''
-             return document.querySelector('#key').value
+             return 'testtt'
+            //  return document.querySelector('#key').value
          },
          displayValue(){
              if(localStorage.length == 0) return ''
-             const value = document.querySelector('#memo').value;
+             return  'test';
+            //  return  document.querySelector('#memo').value;
          },
 
             
@@ -150,14 +152,14 @@ new Vue({
 //   list.innerHTML ='';//listタグの中身を空にすることでlist内のタグの記述を消している
 // }
 
-// //保存の記述
-for(let i =0; i<localStorage.length; i++){
-  const key = localStorage.key(i);
-  const value = localStorage.getItem(key);
-  const table = document.createElement('tr');
-  table.innerHTML= '<tr>'+key+'</th><td>'+value+'</td></tr>'
-  list.appendChild(table);
-}
+//保存の記述
+// for(let i =0; i<localStorage.length; i++){
+//   const key = localStorage.key(1);
+//   const value = localStorage.getItem(key);
+//   const table = document.createElement('tr');
+//   table.innerHTML= '<tr>'+key+'</th><td>'+value+'</td></tr>'
+//   list.appendChild(table);
+// }
 
 
     

@@ -32,18 +32,22 @@
     <h1>Vueの練習</h1>
     <div id="app">
         <main>
-            <input type="text" v-bind:id='strageKey'>
+            <input type="text" id='key' v-model='title'>
             <br>
-            <textarea id="memo" cols="30" rows="10"></textarea>
+            <textarea  id="memo" cols="30" rows="10" v-model='naiyou'></textarea>
             <ul>
                 <li v-on:click='savefunc'>{{save}}</li>
                 <li v-on:click='delfunc'>{{del}}</li>
             </ul>  
             
         </main>
-          <table v-bind:id ='strageList'>
+          <table id ='list'>
           <!-- ここにリストが表示される -->
-          {{lists}}
+          <tr>
+             <th>{{displayKey}}
+                 <td>{{displayValue}}</td>
+             </th>
+          </tr>   
           </table>
     </div>
 
@@ -61,29 +65,58 @@ new Vue({
     data:{
         save:'保存',
         del:'削除',
-        strageKey:'key',
-        // strageMemo:'memo',
-        lists:'',
+        title:'',
+        naiyou:'',
+   
+    
 
     },
     methods: {
         savefunc(){
        // keyとmemoで記入内容取得
         // const key = document.querySelector('#key').value;
-        const value = document.querySelector('#memo').value;
-        // const table = document.createElement('tr');
-        this.list= '<tr><th>'+this.key+'<td>'+value+'</td></th></tr>'
-        localStorage.setItem(this.key, value);
-        
+        // const value = document.querySelector('#memo').value;
+        const table = document.createElement('tr');
+        table.innerHTML= '<th>'+this.title+'<td>'+this.naiyou+'</td></th>'
+        localStorage.setItem(this.title, this.naiyou);
+    
         list.appendChild(table);//リストは変数を定義せずとも使用できる（Vueだからなのか？）
         },
         //削除機能
-         delfunc(){
+        delfunc(){
             localStorage.clear();  
             list.innerHTML ='';//listタグの中身を空にすることでlist内のタグの記述を消している
+        },
+      },
+    computed:{
+         displayKey(){
+             if(localStorage.length == 0) return ''
+            for(let i =0; i<localStorage.length; i++){
+                return localStorage.key(i)//この方法ではdisplayKeyの値がループの度に更新されて一覧でだせない
+
+             } 
+         },
+         displayValue(){
+             if(localStorage.length == 0) return ''
+             for(let i =0; i<localStorage.length; i++){ 
+              return localStorage.getItem(localStorage.key(i))//この方法ではdisplayKeyの値がループの度に更新されて一覧でだせない
+
+             }
+         },
+
     }
-    },
 })
+
+
+//保存の記述
+for(let i =0; i<localStorage.length; i++){
+  const key = localStorage.key(i);
+  const value = localStorage.getItem(key);
+  const table = document.createElement('tr');
+  table.innerHTML= '<tr>'+key+'</th><td>'+value+'</td></tr>'
+  list.appendChild(table);
+}
+
 
 
 
@@ -122,14 +155,6 @@ new Vue({
 //   list.innerHTML ='';//listタグの中身を空にすることでlist内のタグの記述を消している
 // }
 
-// //保存の記述
-// for(let i =0; i<localStorage.length; i++){
-//   const key = localStorage.key(i);
-//   const value = localStorage.getItem(key);
-//   const table = document.createElement('tr');
-//   table.innerHTML= '<tr>'+key+'</th><td>'+value+'</td></tr>'
-//   list.appendChild(table);
-// }
 
 
     
